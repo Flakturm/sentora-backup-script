@@ -6,7 +6,7 @@ BACKUPDIR=/var/sentora/hostdata/<user>/backups
 FILESDIR=/var/sentora/hostdata/<user>/public_html/<site_folder>
 # folder to be excluded if there's any
 EXCLUDE="--exclude=$FILESDIR/<excluded_folder>"
-# how many days backups to rotate
+# backups rotation (days)
 ROTATE=3
 # DB user
 USER=
@@ -20,7 +20,7 @@ find $BACKUPDIR/* -type f -mtime $ROTATE -name '*.gz' -execdir rm -- {} +
 
 # run the backup and compress the result
 /usr/bin/mysqldump -u $USER -p$PASS $DB | gzip > $BACKUPDIR/`date +%F`-db-$DB.sql.gz
-
+# gzip
 tar -cvpzf $BACKUPDIR/`date +%F`-backup.tar.gz -P $FILESDIR $EXCLUDE
 
 # protect the privacy of the data
