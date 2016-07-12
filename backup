@@ -1,0 +1,27 @@
+#!/bin/bash
+
+# folder where the backup files are stored.  Need to create it if not exsits
+BACKUPDIR=/var/sentora/hostdata/<user>/backups
+# folder to be backed up
+FILESDIR=/var/sentora/hostdata/<user>/public_html/<site_folder>
+# folder to be excluded if there's any
+EXCLUDE="--exclude=$FILESDIR/<excluded_folder>"
+# how many days backups to rotate
+ROTATE=3
+# DB user
+USER=
+# DB password
+PASS=
+# DB name
+DB=
+
+# find and remove any backups that are older than the rotated days
+find $BACKUPDIR/* -type f -mtime $ROTATE -name '*.gz' -execdir rm -- {} +
+
+# run the backup and compress the result
+/usr/bin/mysqldump -u $USER -p$PASS $DB | gzip > $BACKUPDIR/`date +%F`-db-$DB.sql.gz
+
+tar -cvpzf $BACKUPDIR/`date +%F`-backup.tar.gz -P $FILESDIR $EXCLUDE
+
+# protect the privacy of the data
+chmod 600 $BACKUPDIR/*
