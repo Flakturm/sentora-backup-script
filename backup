@@ -16,7 +16,7 @@ PASS=
 DB=
 
 # find and remove any backups that are older than the rotated days
-find $BACKUPDIR/* -type f -mtime $ROTATE -name '*.gz' -execdir rm -- {} +
+find $BACKUPDIR/* -type f -mtime +$ROTATE -name '*.gz' -execdir rm -f {} +
 
 # run the backup and compress the result
 /usr/bin/mysqldump -u $USER -p$PASS $DB | gzip > $BACKUPDIR/`date +%F`-db-$DB.sql.gz
